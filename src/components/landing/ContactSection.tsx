@@ -50,7 +50,7 @@ const ContactSection = () => {
             Ready to Transform Your Business?
           </h2>
           <p className="text-lg text-muted-foreground">
-            Let's discuss how Acexten can help you harness the power of AI. 
+            Let's discuss how Acexten can help you harness the power of AI.
             Fill out the form and our team will get back to you promptly.
           </p>
         </div>
@@ -114,9 +114,9 @@ const ContactSection = () => {
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
-                  size="lg" 
+                <Button
+                  type="submit"
+                  size="lg"
                   className="w-full gradient-accent text-accent-foreground hover:opacity-90 transition-opacity"
                   disabled={isSubmitting}
                 >
@@ -161,7 +161,7 @@ const ContactSection = () => {
                   <div>
                     <p className="font-medium text-foreground">Email Us</p>
                     <p className="text-muted-foreground text-sm mt-1">
-                      hello@acexten.com
+                      pk@acexten.com
                     </p>
                   </div>
                 </div>
@@ -173,7 +173,7 @@ const ContactSection = () => {
                   <div>
                     <p className="font-medium text-foreground">Call Us</p>
                     <p className="text-muted-foreground text-sm mt-1">
-                      +44 (0) 1234 567890
+                      +44 (0) 7810117131
                     </p>
                   </div>
                 </div>

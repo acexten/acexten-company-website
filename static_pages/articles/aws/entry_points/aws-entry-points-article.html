@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Every Way Traffic Can Enter AWS — A SOC 2 Survival Guide for 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1208;
+    --ink-soft: #3d3020;
+    --ink-muted: #7a6a50;
+    --cream: #faf7f0;
+    --cream-warm: #f5f0e4;
+    --gold: #c8922a;
+    --gold-light: #e8b84b;
+    --rust: #b54a2c;
+    --teal: #1a6b6b;
+    --teal-light: #e4f0f0;
+    --border: #e2d9c4;
+    --code-bg: #2a2015;
+    --code-text: #e8d4a0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 20px;
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Header ── */
+  .publication-header {
+    border-bottom: 1px solid var(--border);
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--cream);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .pub-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+  }
+
+  .pub-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    max-width: 900px;
+    margin: 80px auto 0;
+    padding: 0 40px;
+    position: relative;
+  }
+
+  .hero-kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-kicker::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 2px;
+    background: var(--gold);
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(40px, 5vw, 68px);
+    font-weight: 900;
+    line-height: 1.08;
+    letter-spacing: -2px;
+    color: var(--ink);
+    margin-bottom: 32px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    max-width: 680px;
+    border-left: 3px solid var(--gold);
+    padding-left: 24px;
+    margin-bottom: 48px;
+  }
+
+  .byline {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 64px;
+  }
+
+  .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--rust));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .byline-text {
+    font-size: 15px;
+    color: var(--ink-muted);
+  }
+
+  .byline-text strong {
+    display: block;
+    color: var(--ink);
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  /* ── Article body ── */
+  .article-body {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 0 40px 120px;
+  }
+
+  p {
+    margin-bottom: 28px;
+    color: var(--ink-soft);
+    font-weight: 300;
+  }
+
+  p strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* ── Pull quote ── */
+  .pull-quote {
+    margin: 56px -80px;
+    padding: 40px 60px;
+    background: var(--ink);
+    color: var(--cream);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pull-quote::before {
+    content: '"';
+    position: absolute;
+    top: -20px;
+    left: 40px;
+    font-family: 'Playfair Display', serif;
+    font-size: 200px;
+    color: var(--gold);
+    opacity: 0.15;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .pull-quote p {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--cream);
+    font-weight: 400;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .pull-quote cite {
+    display: block;
+    margin-top: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    font-style: normal;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Section headers ── */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+    margin-top: 72px;
+    display: block;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -1px;
+    color: var(--ink);
+    margin-bottom: 28px;
+  }
+
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--ink);
+    margin: 48px 0 16px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  h3 .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 500;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  /* ── Layer cards ── */
+  .layer-card {
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+    background: var(--cream-warm);
+    padding: 28px 32px;
+    margin: 32px 0;
+    position: relative;
+  }
+
+  .layer-card.teal {
+    border-left-color: var(--teal);
+    background: var(--teal-light);
+  }
+
+  .layer-card.rust {
+    border-left-color: var(--rust);
+  }
+
+  .layer-card h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 10px;
+  }
+
+  .layer-card .services {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--teal);
+    margin-bottom: 16px;
+    line-height: 1.8;
+  }
+
+  .layer-card p {
+    font-size: 17px;
+    margin-bottom: 0;
+    color: var(--ink-soft);
+  }
+
+  /* ── Code / terminal block ── */
+  .terminal {
+    background: var(--code-bg);
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin: 32px 0;
+    overflow-x: auto;
+    border: 1px solid #3d3020;
+  }
+
+  .terminal-header {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .terminal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .terminal-dot.red { background: #ff5f57; }
+  .terminal-dot.yellow { background: #ffbd2e; }
+  .terminal-dot.green { background: #28c840; }
+
+  .terminal code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--code-text);
+    line-height: 2;
+    white-space: pre;
+    display: block;
+  }
+
+  .terminal code .comment { color: #5a5040; }
+  .terminal code .key { color: #e8b84b; }
+  .terminal code .value { color: #90c8a8; }
+  .terminal code .danger { color: #e87060; }
+
+  /* ── Callout box ── */
+  .callout {
+    background: #fff8ec;
+    border: 1px solid #e8d4a0;
+    border-top: 3px solid var(--gold);
+    padding: 24px 28px;
+    margin: 40px 0;
+  }
+
+  .callout-icon {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .callout p {
+    font-size: 17px;
+    color: var(--ink-soft);
+    margin-bottom: 0;
+  }
+
+  .callout strong {
+    color: var(--ink);
+  }
+
+  /* ── Audit table ── */
+  .audit-table-wrap {
+    overflow-x: auto;
+    margin: 40px -40px;
+  }
+
+  table {
+    width: calc(100% + 80px);
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+
+  thead tr {
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  thead th {
+    padding: 14px 20px;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+  }
+
+  tbody tr:nth-child(even) {
+    background: var(--cream-warm);
+  }
+
+  tbody td {
+    padding: 16px 20px;
+    color: var(--ink-soft);
+    vertical-align: top;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  tbody td:first-child {
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .badge.gold { background: #fef3dc; color: var(--gold); border: 1px solid #e8d4a0; }
+  .badge.teal { background: var(--teal-light); color: var(--teal); border: 1px solid #b4d4d4; }
+  .badge.rust { background: #fdeee9; color: var(--rust); border: 1px solid #f0c4b8; }
+
+  /* ── Evidence checklist ── */
+  .checklist-section {
+    background: var(--ink);
+    color: var(--cream);
+    margin: 56px -40px;
+    padding: 56px 80px;
+  }
+
+  .checklist-section .section-label {
+    color: var(--gold-light);
+  }
+
+  .checklist-section h2 {
+    color: var(--cream);
+    margin-bottom: 40px;
+  }
+
+  .checklist-phase {
+    margin-bottom: 40px;
+  }
+
+  .phase-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #3d3020;
+  }
+
+  .checklist-item {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid #2a2015;
+  }
+
+  .check-icon {
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid var(--gold);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  .check-icon svg {
+    width: 12px;
+    height: 12px;
+    stroke: var(--gold);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .check-content strong {
+    display: block;
+    color: var(--cream);
+    font-weight: 600;
+    font-size: 17px;
+    margin-bottom: 4px;
+  }
+
+  .check-content span {
+    font-size: 15px;
+    color: #9a8870;
+    font-weight: 300;
+  }
+
+  .check-content .how {
+    margin-top: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--gold-light);
+    opacity: 0.7;
+  }
+
+  /* ── Gotcha questions ── */
+  .gotcha-card {
+    border: 1px solid var(--border);
+    padding: 32px;
+    margin-bottom: 24px;
+    position: relative;
+    background: white;
+  }
+
+  .gotcha-num {
+    position: absolute;
+    top: -1px;
+    right: 24px;
+    background: var(--rust);
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    letter-spacing: 1px;
+  }
+
+  .gotcha-q {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-style: italic;
+    color: var(--ink);
+    margin-bottom: 16px;
+    padding-left: 16px;
+    border-left: 3px solid var(--rust);
+  }
+
+  .gotcha-a {
+    font-size: 17px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* ── Closing ── */
+  .closing-metaphor {
+    background: linear-gradient(135deg, #1a1208 0%, #2a1e0a 50%, #1a2a2a 100%);
+    color: var(--cream);
+    margin: 56px -40px;
+    padding: 64px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .closing-metaphor::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at 80% 50%, rgba(200,146,42,0.12) 0%, transparent 60%);
+  }
+
+  .closing-metaphor h2 {
+    color: var(--cream);
+    position: relative;
+  }
+
+  .closing-metaphor p {
+    color: #c8b89a;
+    position: relative;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin: 32px 0;
+    position: relative;
+  }
+
+  .metaphor-col {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(200,146,42,0.3);
+    padding: 24px;
+  }
+
+  .metaphor-col h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 12px;
+  }
+
+  .metaphor-col p {
+    font-size: 17px;
+    margin: 0;
+    color: #c8b89a;
+  }
+
+  .closing-cta {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-style: italic;
+    color: var(--cream);
+    margin-top: 40px;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  .closing-cta em {
+    color: var(--gold-light);
+    font-style: normal;
+  }
+
+  /* ── Divider ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 56px 0;
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .divider-icon {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: 2px;
+  }
+
+  @media (max-width: 700px) {
+    .pull-quote { margin: 40px -20px; padding: 32px 24px; }
+    .audit-table-wrap { margin: 40px -20px; }
+    table { width: calc(100% + 40px); }
+    .checklist-section { margin: 40px -20px; padding: 40px 24px; }
+    .closing-metaphor { margin: 40px -20px; padding: 40px 24px; }
+    .two-col { grid-template-columns: 1fr; }
+    .article-body { padding: 0 20px 80px; }
+    .hero { padding: 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="publication-header">
+  <span class="pub-name">AWS Security</span>
+  <span class="pub-tag">Cloud Architecture · SOC 2 · Zero Trust</span>
+</header>
+
+<div class="hero">
+  <div class="hero-kicker">Security Architecture · February 2026</div>
+  <h1>Every Way Traffic Can <em>Enter</em> AWS — And How to Prove You Control It</h1>
+  <p class="hero-sub">When an auditor asks "list every way someone can enter your AWS environment," they're not asking about your Load Balancer. This is your complete framework for application and administrative entry — SOC 2-ready for 2026.</p>
+  <div class="byline">
+    <div class="avatar">A</div>
+    <div class="byline-text">
+      <strong>AWS Security Architecture Team</strong>
+      12 min read · SOC 2 Common Criteria 6.0 & 7.0
+    </div>
+  </div>
+</div>
+
+<div class="article-body">
+
+  <p>There's a moment in every SOC 2 audit walkthrough that separates mature security teams from everyone else. The auditor leans forward and asks:</p>
+
+  <div class="pull-quote">
+    <p>"List every way someone or something can enter your AWS environment."</p>
+    <cite>— Every SOC 2 Auditor, Every Time</cite>
+  </div>
+
+  <p>The inexperienced engineer opens a browser tab and starts screenshotting Security Groups. The experienced one pulls up a two-plane architecture diagram and starts talking about <strong>identity</strong>.</p>
+
+  <p>That's the gap this article closes.</p>
+
+  <p>In 2026, mature security teams don't think in terms of "open ports." They think in terms of <strong>planes</strong> — the Application (Data) Plane and the Administrative (Management) Plane. If you cannot clearly separate and secure both, your architecture is not audit-ready. Full stop.</p>
+
+  <div class="divider"><span class="divider-icon">◆ PART ONE ◆</span></div>
+
+  <span class="section-label">Application / Data Plane</span>
+  <h2>The Front Doors: How Users & Systems Reach Your Workloads</h2>
+
+  <p>Your application plane is your external-facing surface area. Every public user, B2B partner, SaaS integration, and IoT device touches this layer before it touches anything else. But it isn't a single door — it's a series of controlled checkpoints, each with a specific job.</p>
+
+  <h3><span class="num">LAYER 01</span>The Public Edge — Your Cloud DMZ</h3>
+
+  <p>The edge is where the internet meets your architecture. Think of it as the vestibule of a high-security building: you're allowed to enter, but you haven't been let inside yet.</p>
+
+  <div class="layer-card">
+    <h4>Services in this layer</h4>
+    <div class="services">Amazon Route 53 · CloudFront · AWS WAF · Global Accelerator · AWS Shield</div>
+    <p>This layer handles DNS routing, TLS termination, CDN caching, DDoS mitigation, web attack filtering (SQLi, XSS), and geo-based restrictions. If this layer fails, everything behind it becomes reachable — which is exactly why auditors scrutinize it first.</p>
+  </div>
+
+  <div class="callout">
+    <div class="callout-icon">🔍</div>
+    <p><strong>SOC 2 Focus (Security + Availability):</strong> Auditors expect WAF managed rule sets enabled, Shield Advanced for high-availability workloads, DNS query logging enabled, and logs shipped to a centralized, immutable destination.</p>
+  </div>
+
+  <h3><span class="num">LAYER 02</span>Compute Gateways — Controlled Application Entry</h3>
+
+  <p>Once traffic clears the edge, it needs to reach your application. The critical compliance principle here is <strong>separation</strong>: your compute should never be directly internet-facing. Only controlled gateways accept traffic, and those gateways sit in public subnets while everything else stays private.</p>
+
+  <div class="layer-card teal">
+    <h4>The SOC 2 Gold Standard Pattern</h4>
+    <div class="services">Public Subnet: ALB / API Gateway → Private Subnet: ECS / EKS / EC2 / Lambda</div>
+    <p>This separation proves three things simultaneously: no compute is directly internet-reachable, only inspected gateways accept inbound connections, and least-privilege networking is actually enforced — not just claimed.</p>
+  </div>
+
+  <p>Required controls at this layer aren't optional decorations — they're audit evidence. TLS 1.2+ enforcement, OAuth2/OIDC authentication, mTLS where sensitive data flows, rate limiting and throttling on APIs, and hardened security groups with documented justifications for every rule.</p>
+
+  <h3><span class="num">LAYER 03</span>Private & Hybrid Entry — The "Backdoor" Layer</h3>
+
+  <p>These paths aren't public-facing, but don't let that comfort you. Site-to-Site VPN, Direct Connect, PrivateLink, and Client VPN are all entry points — and in an audit, "private" doesn't mean "unaccountable."</p>
+
+  <div class="layer-card rust">
+    <h4>Zero Trust: AWS Verified Access</h4>
+    <div class="services">AWS Verified Access · AWS Client VPN · PrivateLink · Direct Connect</div>
+    <p>The paradigm shift that matters most here: a VPN gives users a key to the house. Verified Access checks who you are, what device you're using, whether that device meets your security policy — and it does this check <em>on every single access attempt</em>, not just at login. That's why auditors love it. It operationalizes Zero Trust's core principle: Never Trust. Always Verify.</p>
+  </div>
+
+  <p>One compliance detail that carries real weight: <strong>Gateway Endpoints</strong> (for S3 and DynamoDB) mean your data never crosses the public internet. <strong>Interface Endpoints</strong> create private ENIs to AWS services within your VPC. When you can say "our data never leaves the AWS backbone," that sentence means something in an audit room.</p>
+
+  <h3><span class="num">LAYER 04</span>Cross-Account Entry</h3>
+
+  <p>Multi-account architectures are the AWS best practice — but they create entry paths that teams often forget to document. Dev accounts, shared services, CI/CD pipelines, staging environments: all of these can have a route into Production if you're not deliberate about isolation.</p>
+
+  <p>Auditors will ask you to prove that a compromised Dev account <em>cannot</em> enter Production. Your answer lives in route table isolation, Transit Gateway configuration, and Service Control Policies applied at the Organization level. If you can't show all three, you can't answer the question confidently.</p>
+
+  <h3><span class="num">LAYER 05</span>Service-Initiated Entry Points (Commonly Forgotten)</h3>
+
+  <p>This is where most teams leave gaps. Email processing via SES, SFTP file ingestion via Transfer Family, IoT telemetry via IoT Core, SaaS data sync via AppFlow — each of these brings external, potentially untrusted data across your trust boundary. They must be logged, validated, and monitored just like any other ingress path.</p>
+
+  <div class="callout">
+    <div class="callout-icon">⚠️</div>
+    <p><strong>The often-missed pattern:</strong> Email → SES → S3 → Lambda is an attack surface. An adversary who controls an email they know you're processing can potentially influence execution. Treat every service-initiated data path as a potential injection vector.</p>
+  </div>
+
+  <h3><span class="num">LAYER 06</span>Egress That Becomes Ingress</h3>
+
+  <p>The most advanced and underappreciated concept in cloud entry analysis: your outbound traffic can create inbound risk. A Lambda function calling an external API, if that API is compromised, can receive malicious callback payloads. A compromised DNS resolution can redirect internal requests. Security is not just about what <em>enters</em> — it's about what <em>leaves</em> and what <em>returns</em>.</p>
+
+  <p>Controls here include VPC Flow Logs with alerting, DNS Firewall for outbound domain filtering, Network Firewall for egress inspection, and strict, documented outbound security group rules.</p>
+
+  <div class="divider"><span class="divider-icon">◆ PART TWO ◆</span></div>
+
+  <span class="section-label">Administrative / Management Plane</span>
+  <h2>The Master Keys: How Identities Control Your Environment</h2>
+
+  <p>Here's the truth that every modern security team has internalized and that auditors are increasingly testing for:</p>
+
+  <div class="pull-quote">
+    <p>In a cloud-native world, an entry point is not just an IP address. It is an IAM role.</p>
+    <cite>— The Modern Security Perimeter</cite>
+  </div>
+
+  <p>If an attacker steals a developer's <code style="font-family:'JetBrains Mono',monospace; font-size:0.85em; background:var(--cream-warm); padding:2px 6px;">~/.aws/credentials</code> file, they have entered your environment — without touching a Load Balancer, without triggering a WAF rule, without appearing in any network flow log. That is Entry Point #0.</p>
+
+  <h3><span class="num">ADMIN 01</span>Console / CLI / SDK Access</h3>
+
+  <p>This is the master key entry. Every human with the ability to call AWS APIs — whether through the Console, the CLI, or an SDK — is an administrative entry point. The required controls aren't suggestions: MFA enforced for every identity, SSO-only access through IAM Identity Center (no long-lived IAM users with permanent credentials), Service Control Policies applied organization-wide, and CloudTrail enabled in every region without exception.</p>
+
+  <p>When an auditor asks "how do you prevent privilege escalation?" — you need a clear, specific answer. "We have IAM" is not that answer. "We have Permission Boundaries attached to all roles, SCPs preventing IAM:CreateRole outside our provisioning pipeline, and Access Analyzer continuously reviewing cross-account permissions" is.</p>
+
+  <h3><span class="num">ADMIN 02</span>Cross-Account Role Assumption</h3>
+
+  <p>Assuming roles across accounts is one of AWS's most powerful patterns — and one of its most dangerous if misconfigured. A misconfigured trust policy with a wildcarded Principal is a door into your account left visibly open. Controls include External IDs for all cross-account assumptions, session duration limits appropriate to the use case, least-privilege policies reviewed quarterly, and full CloudTrail visibility on every AssumeRole event.</p>
+
+  <h3><span class="num">ADMIN 03</span>Resource-Based Policy Exposure</h3>
+
+  <p>S3 bucket policies, Lambda invoke permissions, KMS key policies, SQS queue policies, SNS topic policies — any resource-based policy with <code style="font-family:'JetBrains Mono',monospace; font-size:0.85em; background:var(--cream-warm); padding:2px 6px;">"Principal": "*"</code> is potentially a public door. The controls that catch these: S3 Block Public Access enforced at the Organization level, IAM Access Analyzer running continuously with findings routed to your security team, and AWS Config rules alerting on any non-compliant resource policies.</p>
+
+  <div class="divider"><span class="divider-icon">◆ EVIDENCE ◆</span></div>
+
+  <span class="section-label">SOC 2 Evidence Checklist</span>
+  <h2>What to Actually Show the Auditor</h2>
+
+  <p>Understanding the architecture is half the battle. The other half is having the evidence ready before the auditor asks — organized, timestamped, and contextually explained. Here's your complete evidence map.</p>
+
+</div>
+
+<div class="checklist-section">
+  <span class="section-label">Phase 1</span>
+  <h2>Application Plane Evidence</h2>
+  <p style="color:#9a8870; margin-bottom:32px; font-size:17px;">Prove the public can only enter through authorized, inspected gateways.</p>
+
+  <div class="checklist-phase">
+    <div class="checklist-item">
+      <div class="check-icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="check-content">
+        <strong>Edge DMZ Mapping</strong>
+        <span>Prove all traffic is inspected at the edge before reaching compute.</span>
+        <div class="how">→ Screenshot of CloudFront Distributions with AWS WAF association visible</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="check-content">
+        <strong>Network Isolation</strong>
+        <span>Prove compute is not internet-reachable — only gateways are.</span>
+        <div class="how">→ VPC Resource Map showing EC2/ECS in Private Subnets with no Route to IGW</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="check-content">
+        <strong>Ingress Lockdown</strong>
+        <span>Prove Load Balancers only accept explicitly authorized traffic.</span>
+        <div class="how">→ Security Group Rules showing ingress limited to Ports 80/443 from specific CIDRs</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="check-content">
+        <strong>Endpoint Security</strong>
+        <span>Prove private service access doesn't traverse the public internet.</span>
+        <div class="how">→ VPC Endpoint list (Interface & Gateway types) with Private DNS enabled</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="check-content">
+        <strong>Log Integrity</strong>
+        <span>Prove all entry attempts are recorded and tamper-evident.</span>
+        <div class="how">→ Sample VPC Flow Logs and WAF Logs stored in encrypted, access-controlled S3 bucket</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="border-top: 1px solid #2a2015; padding-top: 40px; margin-top: 8px;">
+    <div class="phase-title">Phase 2 — Management Plane Evidence</div>
+    <p style="color:#9a8870; margin-bottom:24px; font-size:17px;">Prove administrative entry is restricted to known, multi-factor authenticated identities.</p>
+    <div class="checklist-item">
+      <div class="check-icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="check-content">
+        <strong>MFA Enforcement</strong>
+        <span>Prove no administrator can authenticate with only a password.</span>
+        <div class="how">→ IAM Credential Report showing mfa_active=true for all users, no exceptions</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="check-content">
+        <strong>SSO Adoption</strong>
+        <span>Prove identity is centralized — no shadow admin accounts exist.</span>
+        <div class="how">→ IAM Identity Center portal screenshot + full list of provisioned users with their IDP source</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="check-content">
+        <strong>Privilege Guardrails</strong>
+        <span>Prove administrators cannot escape their permission boundary.</span>
+        <div class="how">→ SCP export from Management Account showing explicit Deny conditions</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="check-content">
+        <strong>API Traceability</strong>
+        <span>Prove every management action is logged with user identity.</span>
+        <div class="how">→ CloudTrail Event History sample with CreateRole / DeleteBucket showing principal ARN</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="check-content">
+        <strong>Zero-Trust Validation</strong>
+        <span>Prove internal apps enforce identity-based access, not just network trust.</span>
+        <div class="how">→ AWS Verified Access policy console showing identity provider + device posture trust policy</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="article-body">
+
+  <span class="section-label">SOC 2-Aligned Summary</span>
+  <h2>The Complete Entry Point Map</h2>
+
+  <div class="audit-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Entry Category</th>
+          <th>Primary Service</th>
+          <th>SOC 2 Criteria</th>
+          <th>Security Control</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Edge / Public</td>
+          <td>CloudFront + WAF</td>
+          <td><span class="badge gold">Security</span> <span class="badge teal">Availability</span></td>
+          <td>Managed Rule Sets, DDoS Shield, WAF Logging</td>
+        </tr>
+        <tr>
+          <td>Application</td>
+          <td>ALB / API Gateway</td>
+          <td><span class="badge gold">Security</span> <span class="badge rust">Privacy</span></td>
+          <td>TLS 1.2+, OAuth/OIDC, mTLS, Rate Limiting</td>
+        </tr>
+        <tr>
+          <td>Private / Hybrid</td>
+          <td>Verified Access + VPN</td>
+          <td><span class="badge gold">Security</span></td>
+          <td>Device Posture + Continuous Identity Auth</td>
+        </tr>
+        <tr>
+          <td>Cross-Account</td>
+          <td>Transit Gateway</td>
+          <td><span class="badge gold">Security</span></td>
+          <td>Route Isolation, Flow Logs, SCP Guardrails</td>
+        </tr>
+        <tr>
+          <td>Service-Initiated</td>
+          <td>SES / Transfer / IoT</td>
+          <td><span class="badge gold">Security</span> <span class="badge teal">Availability</span></td>
+          <td>Input Validation, EventBridge Monitoring</td>
+        </tr>
+        <tr>
+          <td>Administrative</td>
+          <td>IAM Identity Center</td>
+          <td><span class="badge gold">Security</span></td>
+          <td>MFA, SSO-Only, Permission Boundaries, SCPs</td>
+        </tr>
+        <tr>
+          <td>Resource Policies</td>
+          <td>IAM Access Analyzer</td>
+          <td><span class="badge gold">Security</span></td>
+          <td>Continuous Analysis, No Wildcard Principals</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"><span class="divider-icon">◆ GOTCHA ◆</span></div>
+
+  <span class="section-label">The "Stumper" Questions</span>
+  <h2>Phase 3: What Auditors Ask to Test Depth</h2>
+
+  <p>Technical screenshots alone don't pass SOC 2 audits. Experienced auditors probe the <em>process</em> behind the tooling. These are the three questions that separate teams who have built security culture from teams who installed security tools.</p>
+
+  <div class="gotcha-card">
+    <div class="gotcha-num">STUMPER 01</div>
+    <div class="gotcha-q">"Show me a 'Deny' rule in your logs."</div>
+    <p class="gotcha-a">This question tests whether your controls are actually doing anything. Have a CloudWatch Logs Insights query ready that filters WAF blocked requests or Security Group "REJECT" entries in VPC Flow Logs. Walking an auditor through a real blocked attack attempt — even a routine automated scan — proves your perimeter is working, not just configured.</p>
+  </div>
+
+  <div class="gotcha-card">
+    <div class="gotcha-num">STUMPER 02</div>
+    <div class="gotcha-q">"How do you know if an S3 bucket is made public right now — at this exact moment?"</div>
+    <p class="gotcha-a">This tests your continuous compliance posture versus point-in-time screenshots. Show them AWS Config Rule <code style="font-family:'JetBrains Mono',monospace; font-size:0.85em; background:var(--cream-warm); padding:2px 4px;">s3-bucket-public-read-prohibited</code> in a non-compliant state triggering an EventBridge alert, which routes to your security team within minutes. The key word in their question is "right now" — your answer needs to demonstrate real-time detection, not a monthly audit.</p>
+  </div>
+
+  <div class="gotcha-card">
+    <div class="gotcha-num">STUMPER 03</div>
+    <div class="gotcha-q">"How do you handle 'ghost' entries from offboarded employees?"</div>
+    <p class="gotcha-a">This is the identity lifecycle question. Show your SSO/SCIM sync settings between your Identity Provider (Okta, Azure AD, Google Workspace) and IAM Identity Center. When an employee is disabled in the source IDP, their ability to assume any role in any AWS account is severed automatically — often within seconds. The absence of manual steps is the answer. Manual deprovisioning is a control gap; automated SCIM sync is a control.</p>
+  </div>
+
+  <div class="callout">
+    <div class="callout-icon">💡</div>
+    <p><strong>Pro tip for audit walkthroughs:</strong> Don't just show the tool — show the process. If you show an auditor a WAF dashboard, they will ask "Who reviews these logs, and how often?" If you show them an IAM role, they will ask "When was this last reviewed?" Have your Quarterly Access Review calendar invites and meeting minutes ready alongside every technical screenshot. Controls without process evidence are just claims.</p>
+  </div>
+
+</div>
+
+<div class="closing-metaphor">
+  <div class="article-body" style="padding-top: 0; padding-bottom: 0;">
+    <span class="section-label">Final Perspective</span>
+    <h2>The High-Security Building</h2>
+
+    <p>There's a useful mental model for all of this that's worth keeping visible in your architecture reviews.</p>
+
+    <div class="two-col">
+      <div class="metaphor-col">
+        <h4>Application Plane</h4>
+        <p>The front doors, loading docks, and partner entrances. Every external entity — users, partners, IoT, SaaS — enters here. The building's security staff (WAF, Security Groups, ALB rules) decides who gets in and what they can carry.</p>
+      </div>
+      <div class="metaphor-col">
+        <h4>Management Plane</h4>
+        <p>The master key vault. Whoever holds these keys can open any room, modify any system, and rewrite the security rules themselves. This is where most breaches originate — and where most organizations under-invest.</p>
+      </div>
+    </div>
+
+    <p>Most companies secure the doors. They have WAF rules, they have Security Groups, they have Load Balancers in the right subnets. They can answer the auditor's question about external entry.</p>
+
+    <p>Mature companies secure the keys. They have SCIM-synced SSO, they have SCPs, they have Permission Boundaries, they have CloudTrail with real-time alerting on privilege escalation. They can answer the question about administrative entry — and they can prove the answers hold true at any moment in time.</p>
+
+    <div class="closing-cta">
+      Secure both.<br>
+      Document both.<br>
+      And you won't just pass audits —<br>
+      you'll design architectures that <em>deserve to</em>.
+    </div>
+  </div>
+</div>
+
+<div style="max-width:740px; margin:0 auto; padding:48px 40px; text-align:center; border-top: 1px solid var(--border);">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--ink-muted); margin-bottom:12px;">Tags</div>
+  <div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center;">
+    <span class="badge gold" style="font-size:12px; padding:6px 14px;">AWS Security</span>
+    <span class="badge teal" style="font-size:12px; padding:6px 14px;">SOC 2</span>
+    <span class="badge gold" style="font-size:12px; padding:6px 14px;">Cloud Architecture</span>
+    <span class="badge teal" style="font-size:12px; padding:6px 14px;">Zero Trust</span>
+    <span class="badge rust" style="font-size:12px; padding:6px 14px;">IAM</span>
+    <span class="badge gold" style="font-size:12px; padding:6px 14px;">DevSecOps</span>
+  </div>
+</div>
+
+</body>
+</html>
